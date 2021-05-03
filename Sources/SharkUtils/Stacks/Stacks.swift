@@ -139,16 +139,16 @@ public final class Space: UIView {
 
     // MARK: - Init
     
-    init() {
+    public init() {
         super.init(frame: .zero)
     }
     
-    init(h: CGFloat) {
+    public init(h: CGFloat) {
         super.init(frame: .zero)
         withHeight(h)
     }
     
-    init(w: CGFloat) {
+    public init(w: CGFloat) {
         super.init(frame: .zero)
         withWidth(w)
     }
