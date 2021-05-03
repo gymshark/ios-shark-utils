@@ -8,7 +8,7 @@
 import Foundation
 
 @_functionBuilder
-struct GenericArrayBuilder<I> {
+public struct GenericArrayBuilder<I> {
 
     typealias Expression = I
     typealias Component = [I]
