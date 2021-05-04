@@ -28,7 +28,7 @@ public extension UIEdgeInsets {
     }
     
     static func vertical(_ value: CGFloat) -> Self {
-        return UIEdgeInsets(top: .zero, left: value, bottom: .zero, right: value)
+        return UIEdgeInsets(top: value, left: .zero, bottom: value, right: .zero)
     }
     
     // MARK: - Individual edges
