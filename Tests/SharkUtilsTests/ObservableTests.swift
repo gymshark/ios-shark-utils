@@ -15,7 +15,7 @@ private struct GrandChild: Equatable {
     var valC = 0
 }
 
-func ignoreNeverUsed(_ x: Any) {}
+public func ignoreNeverUsed(_ x: Any) {}
 
 class ObservableTests: XCTestCase {
 
