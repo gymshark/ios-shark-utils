@@ -8,7 +8,8 @@
 import UIKit
 
 /**
- This is the old way of creating stack views. Please use Stacks.
+ This is the old way of creating stack views. Please use SharkStackKit.
+ https://github.com/gymshark/shark-stack-kit
  **/
 
 public extension UIStackView {

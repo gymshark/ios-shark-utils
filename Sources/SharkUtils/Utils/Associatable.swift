@@ -17,7 +17,7 @@ private class KeySource {
     }
 }
 
-public protocol Associatable: class {}
+public protocol Associatable: AnyObject {}
 
 public extension Associatable {
     func associatedObject<T: AnyObject>(name: String = #function, makeDefault: () -> T) -> T {
