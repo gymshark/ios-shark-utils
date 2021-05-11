@@ -1,9 +1,8 @@
 //
-//  UIViewChainingExtensions.swift
-//  Store
+//  PinningConstraintHelpers.swift
+//  
 //
-//  Created by Dominic Campbell on 05/11/2020.
-//  Copyright © 2020 Gymshark. All rights reserved.
+//  Created by Russell Warwick on 01/05/2021.
 //
 
 import UIKit
@@ -48,19 +47,6 @@ public extension Pinning {
     }
 }
 
-public struct AxesSet: OptionSet {
-    public let rawValue: Int
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-}
-
-public extension AxesSet {
-    static let vertical = AxesSet(rawValue: 1 << 0)
-    static let horizontal = AxesSet(rawValue: 1 << 1)
-    static let both: AxesSet = [vertical, horizontal]
-}
-
 /**
  TL;DR:
  Helpers you write code that highlights the nested structure of your views
@@ -86,7 +72,8 @@ public extension AxesSet {
  */
 public extension UIView {
     
-    @discardableResult func withSubviews(_ content: () -> [UIView]) -> Self {
+    @discardableResult
+    func withSubviews(_ content: () -> [UIView]) -> Self {
         content().forEach { contentView in
             contentView.translatesAutoresizingMaskIntoConstraints = false
             if contentView.superview !== self {
@@ -96,7 +83,8 @@ public extension UIView {
         return self
     }
     
-    @discardableResult func withEdgePinnedContent(
+    @discardableResult
+    func withEdgePinnedContent(
         _ pinning: Pinning = .all(0),
         priority: UILayoutPriority = .required,
         add: Bool = true,
@@ -112,7 +100,8 @@ public extension UIView {
         )
     }
     
-    @discardableResult func withEdgePinnedContent(
+    @discardableResult
+    func withEdgePinnedContent(
         _ pinning: Pinning = .all(0),
         priority: UILayoutPriority = .required,
         add: Bool = true,
@@ -141,7 +130,8 @@ public extension UIView {
         return self
     }
     
-    @discardableResult func withCenteredContent(add: Bool = true, safeArea: Bool = false, x: CGFloat? = 0, y: CGFloat? = 0, priority: UILayoutPriority = .required, content: () -> [UIView]) -> Self {
+    @discardableResult
+    func withCenteredContent(add: Bool = true, safeArea: Bool = false, x: CGFloat? = 0, y: CGFloat? = 0, priority: UILayoutPriority = .required, content: () -> [UIView]) -> Self {
         let contentViews = content()
         if add {
             withSubviews { contentViews }
@@ -162,7 +152,8 @@ public extension UIView {
         return self
     }
     
-    @discardableResult func withVerticallyCenteredContent(add: Bool = true, safeArea: Bool = false, y: CGFloat? = 0, horizontalEdgePin: CGFloat? = 0, priority: UILayoutPriority = .required, content: () -> [UIView]) -> Self {
+    @discardableResult
+    func withVerticallyCenteredContent(add: Bool = true, safeArea: Bool = false, y: CGFloat? = 0, horizontalEdgePin: CGFloat? = 0, priority: UILayoutPriority = .required, content: () -> [UIView]) -> Self {
         let contentViews = content()
         if add {
             withSubviews { contentViews }
@@ -171,105 +162,9 @@ public extension UIView {
         withEdgePinnedContent(.horizontalOnly(horizontalEdgePin), add: false, content: { contentViews })
         return self
     }
-    
+
     @discardableResult
-    func withSquare(_ value: CGFloat, priority: UILayoutPriority = .required) -> Self {
-        return withFixed(width: value, height: value, priority: priority)
-    }
-    
-    @discardableResult
-    func withWidth(_ value: CGFloat, priority: UILayoutPriority = .required) -> Self {
-        return withFixed(width: value, height: nil, priority: priority)
-    }
-    
-    @discardableResult
-    func withHeight(_ value: CGFloat, priority: UILayoutPriority = .required) -> Self {
-        return withFixed(width: nil, height: value, priority: priority)
-    }
-    
-    @discardableResult func withFixed(width: CGFloat? = nil, height: CGFloat? = nil, priority: UILayoutPriority = .required) -> Self {
-        translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate(
-            [
-                width.flatMap { widthAnchor.constraint(equalToConstant: $0) },
-                height.flatMap { heightAnchor.constraint(equalToConstant: $0) }
-            ]
-            .compactMap {
-                $0?.priority = priority
-                return $0
-            }
-        )
-        return self
-    }
-    
-    @discardableResult func withMinimum(width: CGFloat? = nil, height: CGFloat? = nil, priority: UILayoutPriority = .required) -> Self {
-        translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate(
-            [
-                width.flatMap { widthAnchor.constraint(greaterThanOrEqualToConstant: $0) },
-                height.flatMap { heightAnchor.constraint(greaterThanOrEqualToConstant: $0) }
-            ]
-            .compactMap {
-                $0?.priority = priority
-                return $0
-            }
-        )
-        return self
-    }
-    
-    @discardableResult func withMaximum(width: CGFloat? = nil, height: CGFloat? = nil, priority: UILayoutPriority = .required) -> Self {
-        translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate(
-            [
-                width.flatMap { widthAnchor.constraint(lessThanOrEqualToConstant: $0) },
-                height.flatMap { heightAnchor.constraint(lessThanOrEqualToConstant: $0) }
-            ]
-            .compactMap {
-                $0?.priority = priority
-                return $0
-            }
-        )
-        return self
-    }
-    
-    @discardableResult func withAspectRatio(_ value: CGFloat, priority: UILayoutPriority = .required) -> Self {
-        translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            widthAnchor.constraint(equalTo: heightAnchor, multiplier: value).with { $0.priority = priority }
-        ])
-        return self
-    }
-    
-    @discardableResult func withAspectRatio(greaterThanOrEqualTo value: CGFloat, priority: UILayoutPriority = .required) -> Self {
-        translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            widthAnchor.constraint(greaterThanOrEqualTo: heightAnchor, multiplier: value).with { $0.priority = priority }
-        ])
-        return self
-    }
-    
-    @discardableResult func withAspectFilledContent(priority: UILayoutPriority = .required, content: () -> [UIView]) -> Self {
-        let contentViews = content()
-        withSubviews {
-            contentViews
-        }
-        withCenteredContent(add: false, content: { contentViews })
-        withEdgePinnedContent(priority: .defaultLow, add: false, content: { contentViews })
-        NSLayoutConstraint.activate(
-            contentViews
-                .flatMap {[
-                    $0.widthAnchor.constraint(greaterThanOrEqualTo: widthAnchor, multiplier: 1),
-                    $0.heightAnchor.constraint(greaterThanOrEqualTo: heightAnchor, multiplier: 1)
-                ]}
-                .map {
-                    $0.priority = priority
-                    return $0
-                }
-        )
-        return self
-    }
-    
-    @discardableResult func withScrollableContent(scrollView: UIScrollView = UIScrollView(), pinnedAxes: AxesSet = .horizontal, content: () -> UIView) -> Self {
+    func withScrollableContent(scrollView: UIScrollView = UIScrollView(), pinnedAxes: AxesSet = .horizontal, content: () -> UIView) -> Self {
         let contentView = content()
         withEdgePinnedContent {[
             scrollView.withEdgePinnedContent {[
@@ -285,7 +180,8 @@ public extension UIView {
         return self
     }
     
-    @discardableResult func withRoundedCorners(corners: UIRectCorner, radius: CGFloat) -> Self {
+    @discardableResult
+    func withRoundedCorners(corners: UIRectCorner, radius: CGFloat) -> Self {
         let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
         let mask = CAShapeLayer()
         mask.path = path.cgPath
@@ -300,7 +196,8 @@ public extension UIView {
         return result
     }
     
-    @discardableResult func withAspectFilled(_ content: () -> UIView) -> Self {
+    @discardableResult
+    func withAspectFilled(_ content: () -> UIView) -> Self {
         let view = content()
         withCenteredContent {[
             view
@@ -311,71 +208,6 @@ public extension UIView {
             view.widthAnchor.constraint(greaterThanOrEqualTo: widthAnchor),
             view.heightAnchor.constraint(greaterThanOrEqualTo: heightAnchor)
         ])
-        return self
-    }
-}
-
-public extension UIStackView {
-    class func make(
-        _ axis: NSLayoutConstraint.Axis,
-        spacing: CGFloat? = nil,
-        alignment: UIStackView.Alignment? = nil,
-        distribution: UIStackView.Distribution? = nil,
-        layoutMargins: UIEdgeInsets? = nil) -> Self
-    {
-        Self().with {
-            $0.axis = axis
-            if let spacing = spacing {
-                $0.spacing = spacing
-            }
-            if let alignment = alignment {
-                $0.alignment = alignment
-            }
-            if let distribution = distribution {
-                $0.distribution = distribution
-            }
-            if let layoutMargins = layoutMargins {
-                $0.isLayoutMarginsRelativeArrangement = true
-                $0.layoutMargins = layoutMargins
-            }
-        }
-    }
-    class func vertical(
-        spacing: CGFloat? = nil,
-        alignment: UIStackView.Alignment? = nil,
-        distribution: UIStackView.Distribution? = nil,
-        layoutMargins: UIEdgeInsets? = nil) -> Self
-    {
-        make(
-            .vertical,
-            spacing: spacing,
-            alignment: alignment,
-            distribution: distribution,
-            layoutMargins: layoutMargins
-        )
-    }
-    class func horizontal(
-        spacing: CGFloat? = nil,
-        alignment: UIStackView.Alignment? = nil,
-        distribution: UIStackView.Distribution? = nil,
-        layoutMargins: UIEdgeInsets? = nil) -> Self
-    {
-        make(
-            .horizontal,
-            spacing: spacing,
-            alignment: alignment,
-            distribution: distribution,
-            layoutMargins: layoutMargins
-        )
-    }
-    
-    @discardableResult func withArrangedViews(_ content: () -> [UIView]) -> Self {
-        content().forEach { contentView in
-            contentView.translatesAutoresizingMaskIntoConstraints = false
-            if contentView.superview !== self {
-                addArrangedSubview(contentView)
-            }
-        }
         return self
     }
 }
