@@ -21,6 +21,8 @@ jobs:
     - name: SSH Setup
       run: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme SharkUtils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" | xcpretty
+      with:
+        xcode-version: '12.5'
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme SharkUtils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" | xcpretty
     - name: Run iOS tests
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme SharkUtils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" | xcpretty
