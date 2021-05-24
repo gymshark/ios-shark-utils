@@ -20,9 +20,9 @@ jobs:
          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: SSH Setup
       run: for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
+    - name: Select Xcode 12.5
+      run: sudo xcode-select -s /Applications/Xcode_12.5.app
     - name: Build for iOS
-      with:
-        xcode-version: '12.5'
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme SharkUtils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" | xcpretty
     - name: Run iOS tests
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme SharkUtils -destination "platform=iOS Simulator,OS=latest,name=iPhone 12" | xcpretty
