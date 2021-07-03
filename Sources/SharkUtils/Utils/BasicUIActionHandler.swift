@@ -15,7 +15,47 @@ public final class BasicUIActionHandler: NSObject {
     }
 }
 
+public extension UIView {
+    
+    func tap(tapsRequired: Int = 1, touchesRequired: Int = 1, action: (() -> Void)?) {
+        
+        let handler = associatedObject {
+            BasicUIActionHandler().with {
+                let gesture = UITapGestureRecognizer(target: $0, action: #selector(BasicUIActionHandler.performAction))
+                gesture.numberOfTapsRequired = tapsRequired
+                gesture.numberOfTouchesRequired = touchesRequired
+                addGestureRecognizer(gesture)
+            }
+        }
+        
+        handler.action = action
+    }
+    
+    func longPress(minDuration: TimeInterval, action: (() -> Void)?){
+        let handler = associatedObject {
+            BasicUIActionHandler().with {
+                let gesture = UILongPressGestureRecognizer(target: $0, action: #selector(BasicUIActionHandler.performAction))
+                gesture.minimumPressDuration = minDuration
+                addGestureRecognizer(gesture)
+            }
+        }
+        
+        handler.action = action
+    }
+}
+
 public extension UIControl {
+    
+    func addTarget(forEvent event: Event, action: (() -> Void)?) {
+        let handler = associatedObject {
+            BasicUIActionHandler().with {
+                addTarget($0, action: #selector(BasicUIActionHandler.performAction), for: event)
+            }
+        }
+        
+        handler.action = action
+    }
+    
     var touchUpInside: BasicUIActionHandler {
         associatedObject {
             BasicUIActionHandler().with {
