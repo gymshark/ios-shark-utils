@@ -210,4 +210,26 @@ public extension UIView {
         ])
         return self
     }
+    
+    @discardableResult
+    func withAspectFilledContent(priority: UILayoutPriority = .required, content: () -> [UIView]) -> Self {
+        let contentViews = content()
+        withSubviews {
+            contentViews
+        }
+        withCenteredContent(add: false, content: { contentViews })
+        withEdgePinnedContent(priority: .defaultLow, add: false, content: { contentViews })
+        NSLayoutConstraint.activate(
+            contentViews
+                .flatMap {[
+                    $0.widthAnchor.constraint(greaterThanOrEqualTo: widthAnchor, multiplier: 1),
+                    $0.heightAnchor.constraint(greaterThanOrEqualTo: heightAnchor, multiplier: 1)
+                ]}
+                .map {
+                    $0.priority = priority
+                    return $0
+                }
+        )
+        return self
+    }
 }
